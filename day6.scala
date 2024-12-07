@@ -1,3 +1,5 @@
+package io.cjf.aoc2024.day6
+
 import scala.collection.mutable
 import scala.io.Source
 
