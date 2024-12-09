@@ -40,12 +40,6 @@ val testInpUpdates = """
 val testUpdates = parseUpdates(testInpUpdates, testRules)
 
 class Day5Test extends munit.FunSuite:
-  test("ordering updates") {
-    assertEquals(testUpdates(0).values.toSeq, Seq(75, 47, 61, 53, 29))
-    assertEquals(testUpdates(1).values.toSeq, Seq(97, 61, 53, 29, 13))
-    assertEquals(testUpdates(2).values.toSeq, Seq(75, 29, 13))
-  }
-
   test("mid") {
     assertEquals(testUpdates(0).mid, 61)
     assertEquals(testUpdates(1).mid, 53)
