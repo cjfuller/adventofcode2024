@@ -1,4 +1,4 @@
-use std::ops::Add;
+use adventofcode2024::coords::{Coord, CoordDiff};
 
 fn inputs() -> String {
     std::fs::read_to_string("./inputs/day4.txt").unwrap()
@@ -18,50 +18,6 @@ enum SearchResult {
     NotFound,
 }
 
-#[derive(Clone, Copy)]
-struct Coord {
-    row: i32,
-    col: i32,
-}
-
-impl Coord {
-    fn ul(&self) -> Coord {
-        Coord {
-            row: self.row - 1,
-            col: self.col - 1,
-        }
-    }
-    fn ur(&self) -> Coord {
-        Coord {
-            row: self.row - 1,
-            col: self.col + 1,
-        }
-    }
-    fn ll(&self) -> Coord {
-        Coord {
-            row: self.row + 1,
-            col: self.col - 1,
-        }
-    }
-    fn lr(&self) -> Coord {
-        Coord {
-            row: self.row + 1,
-            col: self.col + 1,
-        }
-    }
-}
-
-impl Add for Coord {
-    type Output = Self;
-
-    fn add(self, rhs: Self) -> Self::Output {
-        Coord {
-            row: self.row + rhs.row,
-            col: self.col + rhs.col,
-        }
-    }
-}
-
 struct Grid {
     grid: Vec<Vec<char>>,
 }
@@ -77,7 +33,12 @@ impl Grid {
         let col: usize = c.col.try_into().ok()?;
         self.grid.get(row).and_then(|v| v.get(col).copied())
     }
-    fn search_from(&self, state: SearchState, c: Coord, delta: Option<Coord>) -> Vec<SearchResult> {
+    fn search_from(
+        &self,
+        state: SearchState,
+        c: Coord,
+        delta: Option<CoordDiff>,
+    ) -> Vec<SearchResult> {
         use SearchState::*;
         let new_state = match (state, self.get(c)) {
             (Begin, Some('X')) => X,
@@ -91,11 +52,11 @@ impl Grid {
             None => (-1..=1)
                 .flat_map(|row| {
                     (-1..=1).flat_map(move |col| {
-                        self.search_from(
-                            new_state,
-                            c + Coord { row, col },
-                            Some(Coord { row, col }),
-                        )
+                        let diff = CoordDiff {
+                            rows: row,
+                            cols: col,
+                        };
+                        self.search_from(new_state, c + diff, Some(diff))
                     })
                 })
                 .collect(),

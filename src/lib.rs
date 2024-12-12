@@ -1,3 +1,4 @@
+pub mod coords;
 pub mod parsers;
 
 use std::fmt::Debug;

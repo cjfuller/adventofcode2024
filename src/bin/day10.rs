@@ -1,14 +1,9 @@
+use adventofcode2024::coords::{Bounded, Coord};
 use std::collections::HashSet;
 use std::rc::Rc;
 
 fn inputs() -> String {
     std::fs::read_to_string("./inputs/day10.txt").unwrap()
-}
-
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-struct Coord {
-    row: usize,
-    col: usize,
 }
 
 #[derive(Debug, Eq, Hash, PartialEq)]
@@ -29,28 +24,6 @@ impl Trail {
             prev: None,
             value: pos,
         })
-    }
-}
-
-impl Coord {
-    fn neighbors(&self, map: &Map) -> Vec<Coord> {
-        let mut result = Vec::with_capacity(4);
-        for (d_row, d_col) in &[(-1i32, 0i32), (1, 0), (0, 1), (0, -1)] {
-            let c_new = Coord {
-                row: match (self.row as i32 + d_row).try_into() {
-                    Ok(us) => us,
-                    Err(..) => continue,
-                },
-                col: match (self.col as i32 + d_col).try_into() {
-                    Ok(us) => us,
-                    Err(..) => continue,
-                },
-            };
-            if map.in_bounds(c_new) {
-                result.push(c_new);
-            }
-        }
-        result
     }
 }
 
@@ -78,26 +51,23 @@ impl Map {
             trails,
         }
     }
-    fn in_bounds(&self, c: Coord) -> bool {
-        c.row < self.topography.len() && c.col < self.topography[0].len()
-    }
     fn get_top(&self, c: Coord) -> u32 {
-        self.topography[c.row][c.col]
+        self.topography[c.ri()][c.ci()]
     }
     fn get_peaks(&self, c: Coord) -> &HashSet<Coord> {
-        &self.peaks[c.row][c.col]
+        &self.peaks[c.ri()][c.ci()]
     }
     fn add_peak(&mut self, c: Coord, peak: Coord) {
-        self.peaks[c.row][c.col].insert(peak);
+        self.peaks[c.ri()][c.ci()].insert(peak);
     }
     fn add_to_trail(&mut self, c: Coord, parent: &Rc<Trail>) {
-        self.trails[c.row][c.col].insert(parent.extend(c));
+        self.trails[c.ri()][c.ci()].insert(parent.extend(c));
     }
     fn start_trail(&mut self, c: Coord) {
-        self.trails[c.row][c.col].insert(Trail::start(c));
+        self.trails[c.ri()][c.ci()].insert(Trail::start(c));
     }
     fn get_trails(&self, c: Coord) -> &HashSet<Rc<Trail>> {
-        &self.trails[c.row][c.col]
+        &self.trails[c.ri()][c.ci()]
     }
     fn get_trail_score(&self, c: Coord) -> usize {
         self.get_trails(c).len()
@@ -110,7 +80,10 @@ impl Map {
         for (row, row_vec) in self.topography.iter().enumerate() {
             for (col, value) in row_vec.iter().enumerate() {
                 if *value == num {
-                    result.push(Coord { row, col })
+                    result.push(Coord {
+                        row: row as i64,
+                        col: col as i64,
+                    })
                 }
             }
         }
@@ -130,6 +103,15 @@ impl Map {
     }
 }
 
+impl Bounded for Map {
+    fn in_bounds(&self, c: Coord) -> bool {
+        c.row < self.topography.len() as i64
+            && c.col < self.topography[0].len() as i64
+            && c.row >= 0
+            && c.col >= 0
+    }
+}
+
 fn part1(inp: &str) -> usize {
     let mut map = Map::new(inp);
     for pos in map.iter_numbers(9) {
@@ -137,7 +119,7 @@ fn part1(inp: &str) -> usize {
     }
     for height in (0..9).rev() {
         for pos in map.iter_numbers(height) {
-            for neighbor in pos.neighbors(&map) {
+            for neighbor in pos.neighbors::<4>(&map) {
                 if map.get_top(neighbor) == height + 1 {
                     for peak in map.get_peaks(neighbor).clone() {
                         map.add_peak(pos, peak);
@@ -156,7 +138,7 @@ fn part2(inp: &str) -> usize {
     }
     for height in (0..9).rev() {
         for pos in map.iter_numbers(height) {
-            for neighbor in pos.neighbors(&map) {
+            for neighbor in pos.neighbors::<4>(&map) {
                 if map.get_top(neighbor) == height + 1 {
                     for trail in map.get_trails(neighbor).clone() {
                         map.add_to_trail(pos, &trail);
