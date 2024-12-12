@@ -16,6 +16,14 @@ pub trait Bounded {
     fn in_bounds(&self, c: Coord) -> bool;
 }
 
+pub struct InfinitePlane;
+
+impl Bounded for InfinitePlane {
+    fn in_bounds(&self, _c: Coord) -> bool {
+        true
+    }
+}
+
 const FOUR: [(i64, i64); 4] = [(-1, 0), (1, 0), (0, 1), (0, -1)];
 const EIGHT: [(i64, i64); 8] = [
     (-1, 0),
@@ -29,6 +37,30 @@ const EIGHT: [(i64, i64); 8] = [
 ];
 
 impl Coord {
+    pub fn u(&self) -> Coord {
+        Coord {
+            row: self.row - 1,
+            col: self.col,
+        }
+    }
+    pub fn d(&self) -> Coord {
+        Coord {
+            row: self.row + 1,
+            col: self.col,
+        }
+    }
+    pub fn l(&self) -> Coord {
+        Coord {
+            row: self.row,
+            col: self.col - 1,
+        }
+    }
+    pub fn r(&self) -> Coord {
+        Coord {
+            row: self.row,
+            col: self.col + 1,
+        }
+    }
     pub fn ul(&self) -> Coord {
         Coord {
             row: self.row - 1,
@@ -41,13 +73,13 @@ impl Coord {
             col: self.col + 1,
         }
     }
-    pub fn ll(&self) -> Coord {
+    pub fn dl(&self) -> Coord {
         Coord {
             row: self.row + 1,
             col: self.col - 1,
         }
     }
-    pub fn lr(&self) -> Coord {
+    pub fn dr(&self) -> Coord {
         Coord {
             row: self.row + 1,
             col: self.col + 1,
