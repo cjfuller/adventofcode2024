@@ -1,3 +1,4 @@
+use std::fmt::Debug;
 use std::ops::{Add, Sub};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
@@ -6,7 +7,7 @@ pub struct Coord {
     pub col: i64,
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct CoordDiff {
     pub rows: i64,
     pub cols: i64,
@@ -103,6 +104,41 @@ impl Coord {
     }
     pub fn ci(&self) -> usize {
         self.col.try_into().unwrap()
+    }
+    pub fn x(&self) -> i64 {
+        self.col
+    }
+    pub fn y(&self) -> i64 {
+        self.row
+    }
+    pub fn from_xy<X: TryInto<i64>, Y: TryInto<i64>>(x: X, y: Y) -> Self
+    where
+        X::Error: Debug,
+        Y::Error: Debug,
+    {
+        Coord {
+            row: y.try_into().unwrap(),
+            col: x.try_into().unwrap(),
+        }
+    }
+}
+
+impl CoordDiff {
+    pub fn x(&self) -> i64 {
+        self.cols
+    }
+    pub fn y(&self) -> i64 {
+        self.rows
+    }
+    pub fn from_xy<X: TryInto<i64>, Y: TryInto<i64>>(x: X, y: Y) -> Self
+    where
+        X::Error: Debug,
+        Y::Error: Debug,
+    {
+        CoordDiff {
+            rows: y.try_into().unwrap(),
+            cols: x.try_into().unwrap(),
+        }
     }
 }
 

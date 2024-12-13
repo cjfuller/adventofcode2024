@@ -22,6 +22,15 @@ impl<T: Debug + Eq> Debug for ParseResult<'_, T> {
     }
 }
 
+impl<T: Eq> ParseResult<'_, T> {
+    pub fn unwrap_value(self) -> T {
+        match self {
+            Self::Success { value, .. } => value,
+            Self::Failure => panic!("Unwrap of parsing failure"),
+        }
+    }
+}
+
 pub trait Parser: Sized {
     type Target: Eq;
     fn apply<'a>(&self, target: &'a str) -> ParseResult<'a, Self::Target>;
