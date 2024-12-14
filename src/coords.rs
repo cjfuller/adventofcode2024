@@ -1,5 +1,5 @@
 use std::fmt::Debug;
-use std::ops::{Add, Sub};
+use std::ops::{Add, AddAssign, Mul, Rem, Sub};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub struct Coord {
@@ -130,6 +130,9 @@ impl CoordDiff {
     pub fn y(&self) -> i64 {
         self.rows
     }
+    pub fn norm_1(&self) -> i64 {
+        self.cols.abs() + self.rows.abs()
+    }
     pub fn from_xy<X: TryInto<i64>, Y: TryInto<i64>>(x: X, y: Y) -> Self
     where
         X::Error: Debug,
@@ -138,6 +141,36 @@ impl CoordDiff {
         CoordDiff {
             rows: y.try_into().unwrap(),
             cols: x.try_into().unwrap(),
+        }
+    }
+}
+
+impl Mul<i64> for CoordDiff {
+    type Output = CoordDiff;
+
+    fn mul(self, rhs: i64) -> Self::Output {
+        Self {
+            cols: self.cols * rhs,
+            rows: self.rows * rhs,
+        }
+    }
+}
+
+impl Rem<CoordDiff> for Coord {
+    type Output = Coord;
+
+    fn rem(self, rhs: CoordDiff) -> Self::Output {
+        let mut c = self.col;
+        if c < 0 {
+            c += rhs.cols * ((c / rhs.cols).abs() + 1);
+        }
+        let mut r = self.row;
+        if r < 0 {
+            r += rhs.rows * ((r / rhs.rows).abs() + 1);
+        }
+        Self {
+            col: c % rhs.cols,
+            row: r % rhs.rows,
         }
     }
 }
@@ -179,6 +212,13 @@ impl Add<Self> for Coord {
             row: self.row + rhs.row,
             col: self.col + rhs.col,
         }
+    }
+}
+
+impl AddAssign<Self> for Coord {
+    fn add_assign(&mut self, rhs: Self) {
+        self.row += rhs.row;
+        self.col += rhs.col;
     }
 }
 

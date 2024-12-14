@@ -46,7 +46,7 @@ impl ClawGame {
         let parse_xy = || {
             Parsers::lit("X+")
                 .then(Parsers::num())
-                .followed_by(Parsers::lit(", Y+"))
+                .followed_by(", Y+")
                 .and(Parsers::num())
         };
         let a = Parsers::lit("Button A: ")
@@ -57,7 +57,7 @@ impl ClawGame {
             .map(|(x, y)| CoordDiff::from_xy(x as i64, y as i64));
         let prize = Parsers::lit("Prize: X=")
             .then(Parsers::num())
-            .followed_by(Parsers::lit(", Y="))
+            .followed_by(", Y=")
             .and(Parsers::num())
             .map(|(x, y)| Coord::from_xy(x as i64, y as i64));
         match inp {

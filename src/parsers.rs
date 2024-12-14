@@ -66,6 +66,13 @@ pub trait Parser: Sized {
     }
 }
 
+impl<'s> Parser for &'s str {
+    type Target = String;
+    fn apply<'a>(&self, target: &'a str) -> ParseResult<'a, Self::Target> {
+        Parsers::lit(*self).apply(target)
+    }
+}
+
 pub struct Parsers;
 impl Parsers {
     pub fn r(re: &str) -> impl Parser<Target = String> {
@@ -76,6 +83,9 @@ impl Parsers {
     }
     pub fn num() -> impl Parser<Target = u64> {
         Self::r("[0-9]+").map(|it| it.parse().unwrap())
+    }
+    pub fn snum() -> impl Parser<Target = i64> {
+        Self::r("[-0-9]+").map(|it| it.parse().unwrap())
     }
 }
 
@@ -232,7 +242,7 @@ mod tests {
     }
     #[test]
     fn test_chaining() {
-        let parser = Parsers::num().and(Parsers::lit(" calling birds"));
+        let parser = Parsers::num().and(" calling birds");
         let res = parser.apply("4 calling birds");
         assert_eq!(
             res,
@@ -246,8 +256,8 @@ mod tests {
     fn test_parsing_complex() {
         let parser = Parsers::lit("mul(")
             .then(Parsers::num())
-            .followed_by(Parsers::lit(","))
-            .and(Parsers::num().followed_by(Parsers::lit(")")));
+            .followed_by(",")
+            .and(Parsers::num().followed_by(")"));
         let res = parser.apply("mul(32, 3)");
         assert_eq!(
             res,

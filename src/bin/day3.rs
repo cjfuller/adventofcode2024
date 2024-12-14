@@ -7,8 +7,8 @@ fn inputs() -> String {
 fn mul() -> impl Parser<Target = (u64, u64)> {
     Parsers::lit("mul(")
         .then(Parsers::num())
-        .followed_by(Parsers::lit(","))
-        .and(Parsers::num().followed_by(Parsers::lit(")")))
+        .followed_by(",")
+        .and(Parsers::num().followed_by(")"))
 }
 
 fn part1(inp: &str) -> u64 {
