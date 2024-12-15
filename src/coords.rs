@@ -7,7 +7,7 @@ pub struct Coord {
     pub col: i64,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub struct CoordDiff {
     pub rows: i64,
     pub cols: i64,
@@ -156,6 +156,16 @@ impl Mul<i64> for CoordDiff {
     }
 }
 
+impl Mul<i64> for Coord {
+    type Output = Coord;
+
+    fn mul(self, rhs: i64) -> Self::Output {
+        Self {
+            col: self.col * rhs,
+            row: self.row * rhs,
+        }
+    }
+}
 impl Rem<CoordDiff> for Coord {
     type Output = Coord;
 
