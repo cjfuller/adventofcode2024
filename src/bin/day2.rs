@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 fn inputs() -> String {
     std::fs::read_to_string("./inputs/day2.txt").unwrap()
 }
@@ -16,7 +18,7 @@ struct RemovalIter<'a> {
     next_idx: usize,
 }
 
-impl<'a> Iterator for RemovalIter<'a> {
+impl Iterator for RemovalIter<'_> {
     type Item = Report;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -50,27 +52,20 @@ impl Report {
         if self.nums.len() < 2 {
             return false;
         }
-        let direction = if self.nums.first() < self.nums.last() {
-            Direction::Increasing
-        } else if self.nums.first() > self.nums.last() {
-            Direction::Decreasing
-        } else {
-            return false;
+        let direction = match self.nums.first().cmp(&self.nums.last()) {
+            Ordering::Less => Direction::Increasing,
+            Ordering::Greater => Direction::Decreasing,
+            Ordering::Equal => return false,
         };
-
         for pair in self.nums.windows(2) {
             match direction {
                 Direction::Decreasing => {
-                    if pair[0] <= pair[1] {
-                        return false;
-                    } else if pair[0] - pair[1] > 3 {
+                    if pair[0] <= pair[1] || pair[0] - pair[1] > 3 {
                         return false;
                     }
                 }
                 Direction::Increasing => {
-                    if pair[0] >= pair[1] {
-                        return false;
-                    } else if pair[1] - pair[0] > 3 {
+                    if pair[0] >= pair[1] || pair[1] - pair[0] > 3 {
                         return false;
                     }
                 }

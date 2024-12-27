@@ -93,7 +93,7 @@ impl Region {
 
     fn perimeter(&self, garden: &Garden) -> usize {
         let mut perim: usize = 0;
-        for coord in self.coords.iter().copied() {
+        for coord in self.coords.iter() {
             for n in coord.neighbors::<4>(&InfinitePlane) {
                 if garden.get(n) != Some(self.plant) {
                     perim += 1;
@@ -105,7 +105,7 @@ impl Region {
 
     fn sides_count(&self, garden: &Garden) -> usize {
         let mut sides: usize = 0;
-        for coord in self.coords.iter().copied() {
+        for coord in self.coords.iter() {
             if garden.get(coord.u()) == Some(self.plant) {
                 if garden.get(coord.ul()) == Some(self.plant)
                     && garden.get(coord.l()) != Some(self.plant)

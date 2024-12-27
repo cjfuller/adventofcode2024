@@ -70,7 +70,7 @@ fn part2(inp: &str) -> Coord {
     for b in 1025..=input_coords.len() {
         let blocks: HashSet<Coord> = HashSet::from_iter(input_coords[0..b].iter().copied());
         let maze = Maze { blocks };
-        if let None = solve(&maze) {
+        if solve(&maze).is_none() {
             return input_coords[b - 1];
         }
     }

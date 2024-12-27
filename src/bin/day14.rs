@@ -1,5 +1,5 @@
+use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
-use std::i64;
 use std::ops::Add;
 
 use adventofcode2024::coords::{Coord, CoordDiff};
@@ -93,36 +93,28 @@ impl InQuadrants for Coord {
         // Note, this uses the rows / cols interpretation where the origin is in Quadrant::UL.
         let vert_half = bounds.rows / 2;
         let vert = if bounds.rows % 2 != 0 {
-            if self.row < vert_half {
-                Some(VerticalHalf::U)
-            } else if self.row > vert_half {
-                Some(VerticalHalf::D)
-            } else {
-                None
+            match self.row.cmp(&vert_half) {
+                Ordering::Less => Some(VerticalHalf::U),
+                Ordering::Greater => Some(VerticalHalf::D),
+                Ordering::Equal => None,
             }
+        } else if self.row < vert_half {
+            Some(VerticalHalf::U)
         } else {
-            if self.row < vert_half {
-                Some(VerticalHalf::U)
-            } else {
-                Some(VerticalHalf::D)
-            }
+            Some(VerticalHalf::D)
         };
         let horiz_half = bounds.cols / 2;
 
         let horiz = if bounds.cols % 2 != 0 {
-            if self.col < horiz_half {
-                Some(HorizontalHalf::L)
-            } else if self.col > horiz_half {
-                Some(HorizontalHalf::R)
-            } else {
-                None
+            match self.col.cmp(&horiz_half) {
+                Ordering::Less => Some(HorizontalHalf::L),
+                Ordering::Greater => Some(HorizontalHalf::R),
+                Ordering::Equal => None,
             }
+        } else if self.col < horiz_half {
+            Some(HorizontalHalf::L)
         } else {
-            if self.col < horiz_half {
-                Some(HorizontalHalf::L)
-            } else {
-                Some(HorizontalHalf::R)
-            }
+            Some(HorizontalHalf::R)
         };
 
         vert.and_then(|v| horiz.map(|h| h + v))

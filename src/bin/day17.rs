@@ -52,11 +52,11 @@ impl Machine {
         let op = code[self.instruction_ptr + 1];
         match ins {
             Adv => {
-                self.reg_a = self.reg_a / 2usize.pow(combo_op(op, self) as u32);
+                self.reg_a /= 2usize.pow(combo_op(op, self) as u32);
                 self.instruction_ptr += 2;
             }
             Bxl => {
-                self.reg_b = self.reg_b ^ op;
+                self.reg_b ^= op;
                 self.instruction_ptr += 2;
             }
             Bst => {
@@ -71,7 +71,7 @@ impl Machine {
                 }
             }
             Bxc => {
-                self.reg_b = self.reg_b ^ self.reg_c;
+                self.reg_b ^= self.reg_c;
                 self.instruction_ptr += 2;
             }
             Out => {
@@ -149,10 +149,10 @@ fn input_program() -> [usize; 16] {
 
 fn calc_b_mod_8(prev_a: usize) -> usize {
     let mut b = prev_a % 8;
-    b = b ^ 1;
+    b ^= 1;
     let c = prev_a / (2usize.pow(b as u32));
-    b = b ^ 4;
-    b = b ^ c;
+    b ^= 4;
+    b ^= c;
     b % 8
 }
 

@@ -175,13 +175,10 @@ fn part1(inp: &str) -> (i64, HashMap<Coord, Box<dyn MazeState>>) {
             queue.push_back(n);
         }
     }
-    loop {
-        if let Some(next_pos) = queue.pop_front() {
-            solve_backwards(next_pos, &mut states, &mut queue, &maze);
-        } else {
-            break;
-        }
+    while let Some(next_pos) = queue.pop_front() {
+        solve_backwards(next_pos, &mut states, &mut queue, &maze);
     }
+
     let best_score = states[&maze.start].best_score_for(Direction::East);
     (best_score, states)
 }

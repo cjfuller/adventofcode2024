@@ -18,7 +18,7 @@ fn part1(inp: &str) -> u64 {
             rest,
         } => a * b + (if rest.is_empty() { 0 } else { part1(rest) }),
         ParseResult::Failure => {
-            if inp.len() > 0 {
+            if !inp.is_empty() {
                 part1(&inp[1..])
             } else {
                 0

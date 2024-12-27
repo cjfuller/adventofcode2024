@@ -28,7 +28,7 @@ fn count_matches<'a>(
     design: &'a str,
     cache: &mut HashMap<&'a str, usize>,
 ) -> usize {
-    if design == "" {
+    if design.is_empty() {
         return 1;
     }
     if let Some(precalc) = cache.get(design) {

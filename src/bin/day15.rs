@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::ops::Add;
 
 use adventofcode2024::coords::{Coord, CoordDiff};
@@ -237,6 +237,7 @@ fn move_input() -> String {
     std::fs::read_to_string("./inputs/day15_moves.txt").unwrap()
 }
 
+#[allow(dead_code)]
 fn draw(map: &Map) {
     let mut max_row = i64::MIN;
     let mut max_col = i64::MIN;
@@ -261,7 +262,7 @@ fn draw(map: &Map) {
                 }
             }
         }
-        println!("")
+        println!()
     }
 }
 

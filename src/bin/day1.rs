@@ -41,7 +41,7 @@ fn sim_score(first: &[i32], second: &[i32]) -> i32 {
             .or_insert(1);
     });
     first
-        .into_iter()
+        .iter()
         .map(|i| *i * counts.get(i).copied().unwrap_or(0))
         .sum()
 }

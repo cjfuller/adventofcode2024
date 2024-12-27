@@ -66,7 +66,7 @@ pub trait Parser: Sized {
     }
 }
 
-impl<'s> Parser for &'s str {
+impl Parser for &str {
     type Target = String;
     fn apply<'a>(&self, target: &'a str) -> ParseResult<'a, Self::Target> {
         Parsers::lit(*self).apply(target)

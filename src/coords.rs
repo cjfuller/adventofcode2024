@@ -191,7 +191,7 @@ pub struct NeighborsIter<'a, B: Bounded, const N: u8 = 4> {
     bounds: &'a B,
 }
 
-impl<'a, B: Bounded, const N: u8> Iterator for NeighborsIter<'a, B, N> {
+impl<B: Bounded, const N: u8> Iterator for NeighborsIter<'_, B, N> {
     type Item = Coord;
 
     fn next(&mut self) -> Option<Self::Item> {
