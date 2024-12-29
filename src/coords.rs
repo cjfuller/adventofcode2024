@@ -130,6 +130,9 @@ impl CoordDiff {
     pub fn y(&self) -> i64 {
         self.rows
     }
+    pub fn is_zero(&self) -> bool {
+        self.cols == 0 && self.rows == 0
+    }
     pub fn norm_1(&self) -> i64 {
         self.cols.abs() + self.rows.abs()
     }
